@@ -128,3 +128,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+old.js
+old2.js
+x/searchlogin.js
+x/renderparks.js
+x/Favorites.js
+x/schemauser

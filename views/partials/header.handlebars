@@ -1,0 +1,12 @@
+<header>
+  <a class="site-logo" href="/">
+    Home 🏞️
+  </a>
+  {{#if isLoggedIn}}
+  <a href="/favorites">Favorites</a>
+  <a href="/api/logout">Logout</a>
+  {{else}}
+  <a href="/login">Login</a>
+  <a href="/signup">Sign Up</a>
+  {{/if}}
+</header>

@@ -1,0 +1,49 @@
+{{> header}}
+<main>
+  <section>
+    <h1>National Park Registry</h1>
+    <p>
+      Browse national parks and create a list of favorites along with personal notes to your account.
+      <img src="/heart.png" width="50px">
+    <p>
+      {{#if isLoggedIn}}
+    <p>Welcome back, {{username}}!</p>
+    <p>You should be able to access <a href="/favorites">this page</a>.</p>
+    {{else}}
+    <p>Currently, you are NOT logged in.</p>
+    <p>Use the header above to login or create an account.</p>
+    {{/if}}
+
+    <form action="/search" method="post">
+      <input type="text" name="search" value="{{query}}">
+      <button type="submit">Search</button>
+    </form>
+
+    {{#if error}}
+    <p>{{error}}</p>
+    {{else}}
+    {{#each parks}}
+    <div>
+      <h2>{{fullName}} | {{states}}</h2>
+      <img src="{{images.[0].url}}" width="300px">
+      <h2><span class="favorite-icon" onclick="/addFavorite('{{states}}', '{{url}}', '{{name}}')">&#10084;</span></h2>
+
+      <br>
+      <form action="/addFavorite" method="POST">
+        <input type="hidden" name="url" value="{{url}}">
+        <input type="hidden" name="states" value="{{states}}">
+        <input type="hidden" name="images[0][url]" value="{{images.[0].url}}">
+        <input type="hidden" name="name" value="{{name}}">
+        <button type="submit">Add to Favorites ❤️</button>
+      </form>
+      </p>
+
+      <p><a href="{{url}}" target="_new">View Park on NPS.com</a></p>
+      <p><b>Description</b><br>{{description}}</p>
+      <p><b>Weather Information</b><br>{{weatherInfo}}</p>
+      <p><b>Activities Available</b><br>{{activities.name}}</p>
+    </div>
+    {{/each}}
+    {{/if}}
+  </section>
+</main>
