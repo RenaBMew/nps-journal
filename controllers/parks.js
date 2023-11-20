@@ -12,7 +12,7 @@ const fetchParks = async (query) => {
       throw new Error(parkData.Error);
     }
 
-    return parkData.data.slice(0, 20);
+    return parkData.data.slice(0, 10);
   } catch (error) {
     console.error("Error fetching parks:", error);
     throw error;

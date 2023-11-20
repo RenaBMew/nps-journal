@@ -1,20 +1,20 @@
 const { User } = require("../models");
 
-async function addFavorite(req, res, next) {
+async function addFavorite(req, res) {
   try {
     const { url, states, images, name } = req.body;
-    const _id = req.session._id;
-    const newFavorite = await User.create({
-      id,
+    const userId = req.session._id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    user.favorites.push({
       name,
       states,
       url,
-      notes,
-      //images: [{ url: "" }],
+      images: [{ url }],
     });
-    res.status(200).json(newFavorite);
-    const favorites = await controllers.favorites.getFavorites(_id);
-    res.render("favorites", { favorites });
+    await user.save();
   } catch (error) {
     console.error("Error adding favorite:", error);
     res.redirect("/?error=Error adding favorite");
@@ -23,7 +23,9 @@ async function addFavorite(req, res, next) {
 
 async function getFavorites(_id) {
   try {
-    const favorites = await User.find({ user: _id });
+    const favorites = await User.findOne({
+      username: req.session.username,
+    }).lean();
     return favorites;
   } catch (error) {
     console.error("Error fetching favorites:", error);
@@ -31,4 +33,25 @@ async function getFavorites(_id) {
   }
 }
 
-module.exports = { addFavorite, getFavorites };
+async function removeFavorite(req, res) {
+  try {
+    const { id } = req.body;
+    const userDoc = await User.findOne({ username: req.session.username });
+    userDoc.favoriteParks = userDoc.favoriteParks.filter(
+      (favorite) => favorite.id !== id
+    );
+    const filter = { username: req.session.username };
+    const updateDoc = {
+      $set: {
+        ...userDoc,
+      },
+    };
+    await User.updateOne(filter, updateDoc);
+    res.redirect("/favorites");
+  } catch (error) {
+    console.error("Error removing favorite:", error);
+    res.status(500).send("Internal Server Error");
+  }
+}
+
+module.exports = { addFavorite, getFavorites, removeFavorite };

@@ -1,49 +1,84 @@
 {{> header}}
 <main>
   <section>
-    <h1>National Park Registry</h1>
+    <h1>National Park Journal</h1>
+    {{#if isLoggedIn}}
+    <p>Welcome back, {{this.username}}!</p>
     <p>
-      Browse national parks and create a list of favorites along with personal notes to your account.
-      <img src="/heart.png" width="50px">
+      Browse national parks and create a list of favorites. Once a favorite is added you can add personalized notes
+      about the park on <a href="/favorites">favorites</a> page.
+    </p>
+    <p>Click on the <span class="favorite-icon-true">&#10084;</span> to add a favorite.</p>
     <p>
-      {{#if isLoggedIn}}
-    <p>Welcome back, {{username}}!</p>
-    <p>You should be able to access <a href="/favorites">this page</a>.</p>
-    {{else}}
-    <p>Currently, you are NOT logged in.</p>
-    <p>Use the header above to login or create an account.</p>
-    {{/if}}
-
     <form action="/search" method="post">
       <input type="text" name="search" value="{{query}}">
-      <button type="submit">Search</button>
+      <button type="submit">Explore!</button>
     </form>
+    {{else}}
+    <p>Please <a href="/login">log in</a> or <a href="/signup">sign up</a> to begin exploring!</p>
+    {{/if}}
 
     {{#if error}}
     <p>{{error}}</p>
     {{else}}
     {{#each parks}}
     <div>
-      <h2>{{fullName}} | {{states}}</h2>
+      <h2>{{fullName}}, {{states}}</h2>
       <img src="{{images.[0].url}}" width="300px">
-      <h2><span class="favorite-icon" onclick="/addFavorite('{{states}}', '{{url}}', '{{name}}')">&#10084;</span></h2>
-
-      <br>
       <form action="/addFavorite" method="POST">
+        <input type="hidden" name="id" value="{{id}}">
+        <input type="hidden" name="search" value="{{search}}">
         <input type="hidden" name="url" value="{{url}}">
         <input type="hidden" name="states" value="{{states}}">
         <input type="hidden" name="images[0][url]" value="{{images.[0].url}}">
         <input type="hidden" name="name" value="{{name}}">
-        <button type="submit">Add to Favorites ❤️</button>
+        {{#if favorited}}
+        <button class="selectFavorite fav" type="submit" id="{{id}}">
+          <h2>
+            <font color="red">❤</font>
+          </h2>
+        </button>
+        <div class="wrapper">
+          <input type="checkbox" class="heart-checkbox" id="heart-checkbox">
+          <label class="heart" for="heart-checkbox"></label>
+        </div>
+        {{else}}
+        <button class="selectFavorite fav" type="submit" id="{{id}}">
+          <h2>
+            <font color="white">♡</font>
+          </h2>
+        </button>
+        <div class="wrapper">
+          <input type="checkbox" class="heart-checkbox" id="heart-checkbox">
+          <label class="heart" for="heart-checkbox"></label>
+        </div>
+        {{/if}}
       </form>
       </p>
-
       <p><a href="{{url}}" target="_new">View Park on NPS.com</a></p>
       <p><b>Description</b><br>{{description}}</p>
       <p><b>Weather Information</b><br>{{weatherInfo}}</p>
-      <p><b>Activities Available</b><br>{{activities.name}}</p>
+      <p>
+        <hr>
+      </p>
     </div>
     {{/each}}
     {{/if}}
   </section>
 </main>
+
+<script>
+  document.addEventListener('click', selectFavoriteButton);
+
+  function selectFavoriteButton(event) {
+    var element = event.target;
+    if (!element.classList.contains('selectFavorite')) return;
+
+    let newHTML = '♡'
+    let currentHTML = element.innerHTML
+
+    if (currentHTML === '♡') newHTML = '❤'
+
+    element.innerHTML = newHTML
+  }
+</script>

@@ -7,6 +7,7 @@ const { MONGODB_URI } = require("./config/connection");
 const apiRoutes = require("./routes/apiRoutes");
 const htmlRoutes = require("./routes/htmlRoutes");
 const app = express();
+const cors = require("cors");
 
 const store = new MongoDBStore({
   uri: MONGODB_URI,
@@ -40,5 +41,6 @@ app.use(express.static("./public"));
 
 app.use("/api", apiRoutes);
 app.use("/", htmlRoutes);
+app.use(cors());
 
 module.exports = app;

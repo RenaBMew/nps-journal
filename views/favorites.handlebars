@@ -1,22 +1,52 @@
 {{> header}}
 <main>
-  <p>You should only be able to see this page if logged in.</p>
-  <p>Currently, you are {{#unless isLoggedIn}} NOT {{/unless}} logged in.</p> {{username}}
-  <p>Use the header above to {{#if isLoggedIn}} logout{{else}} login or create an account{{/if}}.</p>
   <section>
     <h1>Your Favorites</h1>
+    <p>Hi {{this.username}}, below is a list of your favorite parks.</p>
+    <p>Click on <span class="favorite-icon-true">&#10084;</span> to remove a favorite.</p>
 
-    {{#if favorites.length}}
-    {{#each favorites}}
+    {{#each favoriteParks}}
     <div>
-      <h2>{{name}}</h2>
-      <img src="{{images.[0].url}}" width="300px">
-      <p>{{states}}</p>
-      <!-- Add other favorite details as needed -->
+      <h2>{{this.name}}, {{this.states}}</h2>
+      <h2><span class="favorite-icon-true removeFavorite" type="submit" id="{{id}}">&#10084;</span></h2>
+      <img src="{{this.images.[0].url}}" width="300px">
+      <p><a href="{{this.url}}" target="_new">View Park Details</a></p>
+      <form action="/addNote" method="POST">
+        <input type="hidden" name="id" value="{{id}}">
+        <textarea name="note" placeholder="Add or update a note">{{this.notes}}</textarea>
+        <p><button type="submit">Save Note</button></p>
+      </form>
     </div>
+    <p>
+      <hr>
+    </p>
     {{/each}}
-    {{else}}
-    <p>No favorites added yet.</p>
-    {{/if}}
   </section>
 </main>
+<script>
+  document.addEventListener('click', removeFavorite);
+
+  function removeFavorite(event) {
+    var element = event.target;
+    if (!element.classList.contains('removeFavorite')) return;
+
+    const parkId = element.id;
+    const parkElement = element.closest('div');
+    parkElement.remove();
+    fetch("/removeFavorite", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: parkId }),
+    })
+      .then(response => response.json(id))
+      .then(data => {
+        console.log("Park removed successfully:", data);
+        //element.parentNode.remove();
+      })
+      .catch(error => {
+        console.error("Error removing park:", error);
+      });
+  }
+</script>

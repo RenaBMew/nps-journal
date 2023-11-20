@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const controllers = require("../controllers");
 const checkAuth = require("../middleware/auth");
+const { User } = require("../models");
 
 router.get("/", ({ session: { isLoggedIn, username } }, res) => {
   console.log("isLoggedIn:", isLoggedIn);
@@ -23,31 +24,77 @@ router.get("/", (req, res) => {
   res.render("index", { query });
 });
 
-router.get("/favorites", checkAuth, ({ session: { isLoggedIn } }, res) => {
-  res.render("favorites", { isLoggedIn });
+router.post("/search", async (req, res) => {
+  const isLoggedIn = req.session.isLoggedIn || false;
+  if (!isLoggedIn) return;
+
+  const { search } = req.body;
+  let userDoc = await User.findOne({ username: req.session.username });
+  let parks = await controllers.parks.fetchParks(search, isLoggedIn);
+
+  userDoc.favoriteParks.forEach((favorite) => {
+    let match = parks.find((park) => park.id === favorite.id);
+    if (!match) return;
+
+    match.favorited = true;
+  });
+
+  res.render("index", { parks, query: search, isLoggedIn });
 });
 
-router.post("/search", async (req, res) => {
-  const { search } = req.body;
-  console.log(req.body);
-  const isLoggedIn = req.session.isLoggedIn || false;
+router.get("/favorites", checkAuth, async (req, res) => {
+  let userDoc = await User.findOne({ username: req.session.username }).lean();
 
-  try {
-    const parks = await controllers.parks.fetchParks(search, isLoggedIn);
-    res.render("index", { parks, query: search, isLoggedIn });
-  } catch (error) {
-    res.render("index", { error, query: search, isLoggedIn });
-  }
+  res.render("favorites", {
+    isLoggedIn: req.session.isLoggedIn,
+    favoriteParks: userDoc.favoriteParks,
+  });
+  console.log(userDoc);
 });
 
 router.post("/addFavorite", checkAuth, async (req, res) => {
-  try {
-    const newFavorite = controllers.favorites.addFavorite;
-    res.status(200).json(newFavorite);
-  } catch (error) {
-    console.error("Error adding favorite:", error);
-    res.redirect("/?error=Error adding favorite");
-  }
+  const isLoggedIn = req.session.isLoggedIn || false;
+  if (!isLoggedIn) return;
+
+  const { url, states, images, name, id } = req.body;
+
+  let userDoc = await User.findOne({ username: req.session.username });
+  let match = userDoc.favoriteParks.find((favorite) => favorite.id === id);
+
+  if (match)
+    userDoc.favoriteParks = userDoc.favoriteParks.filter(
+      (favorite) => favorite.id !== id
+    );
+  else userDoc.favoriteParks.push({ url, states, images, name, id });
+
+  const filter = { username: req.session.username };
+  const updateDoc = {
+    $set: {
+      ...userDoc,
+    },
+  };
+
+  await User.updateOne(filter, updateDoc);
+  res.status(204).send();
 });
+
+router.post("/getFavorites", checkAuth, async (req, res) => {
+  const isLoggedIn = req.session.isLoggedIn || false;
+  if (!isLoggedIn) return;
+
+  const { url, states, images, name, id, search } = req.body;
+
+  let userDoc = await User.findOne({ username: req.session.username });
+  let match = userDoc.favoriteParks.find((favorite) => favorite.id === id);
+
+  if (match)
+    userDoc.favoriteParks = userDoc.favoriteParks.filter(
+      (favorite) => favorite.id !== id
+    );
+  else userDoc.favoriteParks.push({ url, states, images, name, id });
+});
+
+router.post("/removeFavorite", controllers.favorites.removeFavorite);
+router.post("/addNote", checkAuth, controllers.notes.addNote);
 
 module.exports = router;

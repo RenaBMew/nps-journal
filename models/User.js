@@ -19,7 +19,7 @@ const UserSchema = new Schema(
         name: String,
         states: String,
         id: String,
-        //images: String,
+        images: [{ url: String }],
         url: String,
         notes: String,
       },
