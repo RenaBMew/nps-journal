@@ -47,7 +47,6 @@ async function removeFavorite(req, res) {
       },
     };
     await User.updateOne(filter, updateDoc);
-    res.redirect("/favorites");
   } catch (error) {
     console.error("Error removing favorite:", error);
     res.status(500).send("Internal Server Error");
