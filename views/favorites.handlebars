@@ -6,47 +6,48 @@
     <p>Click on <span class="favorite-icon-true">&#10084;</span> to remove a favorite.</p>
 
     {{#each favoriteParks}}
-    <div>
-      <h2>{{this.name}}, {{this.states}}</h2>
-      <h2><span class="favorite-icon-true removeFavorite" type="submit" id="{{id}}">&#10084;</span></h2>
-      <img src="{{this.images.[0].url}}" width="300px">
-      <p><a href="{{this.url}}" target="_new">View Park Details</a></p>
-      <form action="/addNote" method="POST">
-        <input type="hidden" name="id" value="{{id}}">
-        <textarea name="note" placeholder="Add or update a note">{{this.notes}}</textarea>
-        <p><button type="submit">Save Note</button></p>
-      </form>
+    <div class="favcon">
+      <div class="favtitle">
+        <p>
+          <hr>
+        </p>
+        <h2>{{this.name}}, {{this.states}}&nbsp; <span class="favorite-icon-true removeFavorite" type="submit"
+            id="{{id}}">&#10084;</span></h2>
+      </div>
+      <div class="favcol">
+        <img src="{{this.images.[0].url}}">
+        <p><a href="{{this.url}}" class="body" target="_new">Visit Park on NPS</a></p>
+        <form action="/addNote" method="POST">
+          <input type="hidden" name="id" value="{{id}}">
+          <textarea name="note" placeholder="Add or update a note">{{this.notes}}</textarea>
+          <p><button type="submit">Save Note</button></p>
+        </form>
+      </div>
     </div>
-    <p>
-      <hr>
-    </p>
     {{/each}}
   </section>
 </main>
 <script>
   document.addEventListener('click', removeFavorite);
-
   function removeFavorite(event) {
     var element = event.target;
-    if (!element.classList.contains('removeFavorite')) return;
-
+    if (!element.classList.contains('removeFavorite')) return
     const parkId = element.id;
-    const parkElement = element.closest('div');
-    parkElement.remove();
-    fetch("/removeFavorite", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: parkId }),
-    })
-      .then(response => response.json(id))
-      .then(data => {
-        console.log("Park removed successfully:", data);
-        //element.parentNode.remove();
+
+    const removeFavorite = element.closest('.favcon');
+    if (removeFavorite) {
+      removeFavorite.remove();
+      fetch("/removeFavorite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: parkId }),
       })
-      .catch(error => {
-        console.error("Error removing park:", error);
-      });
+        .then(response => response.json(id))
+        .catch(error => {
+          console.error("Error removing park:", error);
+        });
+    }
   }
 </script>

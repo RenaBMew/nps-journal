@@ -1,19 +1,17 @@
 :root {
   --black: #020303;
-  --dark-grey: #171c1c;
-  --light-grey: #a7b9b7;
-  --primary: #ececec;
-  --primary-dark: #838383;
-  --secondary: hsl(0, 0%, 100%);
-  --secondary-light: hsl(0, 0%, 86%);
-  --text-color: #ffffff;
+  --white: #ffffff;
+  --npsgreen: #4b5e26;
+  --npsbrown: #c46b38;
+  --btnhover: #eee;
+  --hover: #4b5e26;
   --space: 16px;
   --font-size: 18px;
 }
 
 body {
-  background-color: var(--primary-dark);
-  color: var(--text-color);
+  background-color: var(--white);
+  color: var(--black);
   font-size: var(--font-size);
   line-height: 1.5;
   padding: 0;
@@ -29,7 +27,7 @@ main {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  background-color: var(--black);
+  background-color: var(--white);
   padding: var(--space) calc(var(--space) * 3);
   text-align: center;
 }
@@ -49,15 +47,23 @@ h3 {
   font-size: calc(var(--font-size) * 1.5);
 }
 
-a {
-  color: var(--secondary-light);
+a.body {
+  color: var(--black);
   transition: color 200ms;
   text-decoration: none;
   font-weight: bold;
 }
+
+a {
+  color: var(--white);
+  transition: color 200ms;
+  text-decoration: none;
+  font-weight: bold;
+}
+
 a:hover,
 a:focus {
-  color: var(--secondary);
+  color: var(--hover);
   font-weight: bold;
 }
 
@@ -79,36 +85,38 @@ header .site-logo {
 }
 
 input {
-  background-color: transparent;
-  border: 1px solid white;
-  border-radius: .1em;
+  background-color: var(--white);
+  border: 1px solid var(--npsgreen);
+  border-radius: 8px;
   padding: .7em;
-  color: white;
+  color: var(--black);
+  font-weight: bold;
   font-size: 1em;
   width: 250px;
 }
 
 textarea {
-  width: 80%;
-  height:100px;
-  background-color: transparent;
-  border: 1px solid white;
-  border-radius: .1em;
+  width: 90%;
+  height: 150px;
+  border: none;
+  background-color: #f5f5f5;
+  border-radius: 10px;
   padding: .7em;
-  color: white;
+  color: var(--black);
   font-size: 1em;
   font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
   resize: none;
 }
 
 button {
-  background-color: var(--secondary-light);
+  background-color: var(--white);
   color: var(--black);
-  padding: .7em .9em;
+  padding: .8em 1em;
   text-align: center;
   text-decoration: none;
-  font-size: .8em;
-  border-radius: .6em;
+  font-size: .9em;
+  border-radius: 8px;
+  border: 1px solid var(--black);
   transition-duration: 0.4s;
   cursor: pointer;
   font-weight: 800;
@@ -116,7 +124,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--primary);
+  background-color: var(--btnhover);
   color: var(--black);
 }
 
@@ -124,66 +132,29 @@ button.fav {
   background-color: transparent;
   border: none;
   cursor: pointer;
+  padding: 0px;
+  margin: 0px;
 }
 
-.heart {
-  color: red;
-  background-color: currentColor;
-  display: inline-block;
-  height: 50px;
-  margin: 0 10px;
-  position: relative;
-  top: 0;
-  transform: rotate(-45deg);
-  position: absolute;
-  left: 45%;
-  top: 45%;
-  width: 50px;
-}
-
-.heart-checkbox {
-  display: none;
-}
-
-.heart::before,
-.heart::after {
-  content: "";
-  background-color: currentColor;
-  border-radius: 50%;
-  height: 50px;
-  position: absolute;
-  width: 50px;
-}
-
-.heart:before {
-  top: -25px;
-  left: 0;
-}
-
-.heart:after {
-  left: 25px;
-  top: 0;
-}
-
-.heart-checkbox:checked+.heart {
-  color: black;
+img {
+  border-radius: 10px;
 }
 
 hr {
-  border: .15em solid #4b4b4b;
+  border: .1em solid var(--npsgreen);
 }
 
 footer {
   text-align: center;
   margin-top: auto;
-  background-color: var(--cream);
-  color: var(--bg);
+  background-color: var(--black);
+  color: var(--white);
   padding: 20px;
 }
 
 .site-logo {
   text-align: center;
-  color: var(--text-color);
+  color: var(--white);
   text-decoration: none;
   margin: calc(var(--space) * 4) auto;
   display: block;
@@ -199,7 +170,7 @@ footer {
 }
 
 .login-form .login-error {
-  color: var(--secondary-light);
+  color: var(--white);
 }
 
 .login-form input {
@@ -212,14 +183,56 @@ footer {
   cursor: pointer;
 }
 
-.favorite-icon {
-  color: #808080;
+.heart-icon {
   cursor: pointer;
+  transition: color 0.3s;
+  color: #ccc;
 }
-  
-.favorite-icon:hover {
+
+.heart-icon:hover {
   color: red;
 }
+
+.heart-icon.clicked {
+  color: red;
+}
+
+.favcon {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
+.favtitle {
+  width:100%;
+  margin: 0;
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.favcol {
+  display: flex;
+  flex-direction: column;
+}
+
+.favcol img {
+  max-width: 80%;
+  height: auto;
+  margin: auto;
+  display: block;
+}
+
+.favcol2 {
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  padding: 10px;
+  text-align: left;
+  display: block;
+}
+
 
 @media screen and (max-width: 700px) {
   .site-logo {

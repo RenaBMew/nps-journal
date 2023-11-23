@@ -2,54 +2,43 @@ const { User } = require("../models");
 
 async function addFavorite(req, res) {
   try {
-    const { url, states, images, name } = req.body;
-    const userId = req.session._id;
-    const user = await User.findById(userId);
+    const { url, states, images, name, id } = req.body;
+    const user = await User.findOne({
+      username: req.session.username,
+    });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
-    user.favorites.push({
-      name,
-      states,
-      url,
-      images: [{ url }],
-    });
+    user.favoriteParks.push({ url, states, images, name, id });
     await user.save();
-  } catch (error) {
-    console.error("Error adding favorite:", error);
-    res.redirect("/?error=Error adding favorite");
+    res.status(204).send();
+  } catch (err) {
+    res.status(500).send(err.message);
   }
 }
 
-async function getFavorites(_id) {
+async function getFavorites(req, res) {
   try {
-    const favorites = await User.findOne({
-      username: req.session.username,
-    }).lean();
-    return favorites;
-  } catch (error) {
-    console.error("Error fetching favorites:", error);
-    throw error;
+    let user = await User.findOne({ username: req.session.username }).lean();
+    res.render("favorites", {
+      isLoggedIn: req.session.isLoggedIn,
+      favoriteParks: user.favoriteParks,
+    });
+    console.log(user);
+  } catch (err) {
+    res.status(500).send(err.message);
   }
 }
 
 async function removeFavorite(req, res) {
   try {
     const { id } = req.body;
-    const userDoc = await User.findOne({ username: req.session.username });
-    userDoc.favoriteParks = userDoc.favoriteParks.filter(
-      (favorite) => favorite.id !== id
-    );
-    const filter = { username: req.session.username };
-    const updateDoc = {
-      $set: {
-        ...userDoc,
-      },
-    };
-    await User.updateOne(filter, updateDoc);
-  } catch (error) {
-    console.error("Error removing favorite:", error);
-    res.status(500).send("Internal Server Error");
+    const username = req.session.username;
+    await User.updateOne({ username }, { $pull: { favoriteParks: { id } } });
+    res.status(204).send();
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
   }
 }
 
