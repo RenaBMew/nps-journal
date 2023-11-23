@@ -130,6 +130,8 @@ dist
 .pnp.*
 old.js
 old2.js
+x/
+x/Parks.js
 x/searchlogin.js
 x/renderparks.js
 x/Favorites.js
