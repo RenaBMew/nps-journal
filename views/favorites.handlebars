@@ -16,7 +16,10 @@
       </div>
       <div class="favcol">
         <img src="{{this.images.[0].url}}">
-        <p><a href="{{this.url}}" class="body" target="_new">Visit Park on NPS</a></p>
+        <p><a href="{{this.url}}" class="body" title="Opens in new tab" target="_new">Visit Park on NPS.com &#x2197;</a>
+        </p>
+        <br><b style="text-align: left; margin-left: 40px;">My Notes</b>
+        <br>
         <form action="/addNote" method="POST">
           <input type="hidden" name="id" value="{{id}}">
           <textarea name="note" placeholder="Add or update a note">{{this.notes}}</textarea>

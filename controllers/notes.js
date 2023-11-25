@@ -7,9 +7,6 @@ async function addNote(req, res) {
     const update = { $set: { "favoriteParks.$.notes": note } };
     const options = { upsert: true };
     const result = await User.updateOne(filter, update, options);
-    if (result) {
-      res.redirect("/favorites");
-    }
   } catch (err) {
     res.status(500).send(err.message);
   }

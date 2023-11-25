@@ -5,8 +5,7 @@
     {{#if isLoggedIn}}
     <p>Welcome back, {{this.username}}!</p>
     <p>
-      Browse national parks and create a list of favorites. Once a favorite is added you can add personalized notes
-      about the park on the <a href="/favorites" class="body">favorites</a> page.
+      Browse national parks and create a list of favorites with personal notes for each park.
     </p>
     <p>Click on the <span class="heart-icon">&#10084;</span> icon to add a favorite.</p>
     <p>
@@ -29,7 +28,7 @@
       </div>
       <div class="favcol">
         <img src="{{images.[0].url}}">
-        <p><a href="{{url}}" class="body" target="_new">Visit Park on NPS.com</a></p>
+        <p><a href="{{url}}" class="body" title="Opens in new tab" target="_new">Visit Park on NPS.com &#x2197;</a></p>
         <form action="/addFavorite" method="POST">
           <input type="hidden" name="id" value="{{id}}">
           <input type="hidden" name="search" value="{{search}}">

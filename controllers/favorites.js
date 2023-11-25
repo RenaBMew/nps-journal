@@ -3,9 +3,7 @@ const { User } = require("../models");
 async function addFavorite(req, res) {
   try {
     const { url, states, images, name, id } = req.body;
-    const user = await User.findOne({
-      username: req.session.username,
-    });
+    const user = await User.findOne({ username: req.session.username });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -19,7 +17,7 @@ async function addFavorite(req, res) {
 
 async function getFavorites(req, res) {
   try {
-    let user = await User.findOne({ username: req.session.username }).lean();
+    const user = await User.findOne({ username: req.session.username }).lean();
     res.render("favorites", {
       isLoggedIn: req.session.isLoggedIn,
       favoriteParks: user.favoriteParks,

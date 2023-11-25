@@ -170,7 +170,7 @@ footer {
 }
 
 .login-form .login-error {
-  color: var(--white);
+  color: var(--black);
 }
 
 .login-form input {
