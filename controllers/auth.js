@@ -18,6 +18,7 @@ async function login(req, res) {
       return res.redirect("/login?error=username or password is incorrect");
 
     req.session.isLoggedIn = true;
+    req.session.username = username;
     req.session.save(() => res.redirect("/"));
   } catch (err) {
     res.status(500).send(err.message);
